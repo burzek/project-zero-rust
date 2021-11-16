@@ -1,7 +1,10 @@
 use std::fmt;
-use cgmath::{Point2, Vector2};
+use cgmath::Vector2;
+use sdl2::rect::Point;
+use sdl2::render::WindowCanvas;
+use crate::ui::graphics::Graphics;
 
-pub(super) enum EntityType {
+pub enum EntityType {
     PLAYER,
     ENEMY1
 }
@@ -14,22 +17,21 @@ impl fmt::Display for EntityType {
         }
     }
 }
-
-pub(super) struct Entity {
-    pub position : Point2<i32>,
+pub struct Entity {
+    pub position : Point,
     pub speed : Vector2<i32>,
     pub hp: u8
 }
 
-pub(super) trait EntityInfo {
+pub trait EntityInfo {
     fn get_id(&self) -> &str;
     fn get_entity_type(&self) -> EntityType;
-    fn get_position(&self) -> Point2<i32>;
+    fn get_position(&self) -> Point;
     fn get_speed(&self) -> Vector2<i32>;
     fn get_hp(&self) -> u8;
 }
 
 pub trait EntityRenderer {
-    fn update(&self) -> ();
-    fn render(&self) -> ();
+    fn update(&mut self) -> ();
+    fn render(&self, g : &mut WindowCanvas) -> ();
 }
