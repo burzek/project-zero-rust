@@ -1,35 +1,33 @@
+use std::borrow::BorrowMut;
 use std::time::Duration;
 use crate::ui::graphics::Graphics;
 use crate::objects::player::Player;
 use crate::objects::entity::EntityRenderer;
+use crate::objects::entity::EntityUpdater;
 use log::info;
 use sdl2::event::Event;
 use sdl2::render::WindowCanvas;
 use crate::ui::inputstate::InputState;
 
-const WINDOW_WIDTH: u32 = 1024;
-const WINDOW_HEIGHT: u32 = 768;
-const FPS : u32 = 60;
-const APP_NAME: &str = "project-zero";
 
 
 pub struct Game {
-    player: Box<Player>,
-    graphics: Box<Graphics>,
-    inputs : Box<InputState>,
+    player: Player,
+    graphics: Graphics,
+    inputs : InputState,
     is_active : bool
 }
 
 impl Game {
-    pub fn new() -> Box<Self> {
+    pub fn new() -> Self {
         info!("Starting the game...");
 
-        let game = Box::new(Self {
-            graphics: Graphics::new(APP_NAME, WINDOW_WIDTH, WINDOW_HEIGHT),
+        let game = Self {
+            graphics: Graphics::new(crate::APP_NAME, crate::WINDOW_WIDTH, crate::WINDOW_HEIGHT),
             player: Player::new(),
             inputs : InputState::new(),
             is_active : true
-        });
+        };
         return game;
     }
 
@@ -38,12 +36,11 @@ impl Game {
 
         while self.is_active() {
             let mut tick = self.graphics.get_ticks();
-            let next_tick : u32 = tick + 1000 / FPS;
+            let next_tick : u32 = tick + 1000 / crate::FPS;
 
             while (tick <= next_tick) {
                 self.handle_inputs();
-                let InputState = self.inputs.as_ref();
-                self.world_update(InputState);
+                self.world_update();
                 tick = self.graphics.get_ticks();
             }
 
@@ -56,8 +53,8 @@ impl Game {
         return self.is_active;
     }
 
-    fn world_update(&mut self, input_state: &InputState) {
-        self.player.update();
+    fn world_update(&mut self) {
+        self.player.update(&self.inputs, 0.005);
     }
 
     fn render(&mut self) {

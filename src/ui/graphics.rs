@@ -10,10 +10,10 @@ pub struct Graphics {
 }
 
 impl Graphics {
-    pub fn new(app_name: &str, screen_width: u32, screen_height: u32) -> Box<Self> {
-        return Box::new(Graphics {
+    pub fn new(app_name: &str, screen_width: u32, screen_height: u32) -> Self {
+        return Graphics {
             sdl_descriptor: SDLDescriptor::new(app_name, screen_width, screen_height)
-        });
+        };
     }
 
     pub fn event_pump(&self) -> EventPump {

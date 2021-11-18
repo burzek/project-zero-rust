@@ -1,3 +1,4 @@
+use std::borrow::BorrowMut;
 use std::collections::HashSet;
 use cgmath::{Point2, Vector2};
 use log::info;
@@ -13,15 +14,15 @@ pub struct InputState {
 }
 
 impl InputState {
-    pub fn new() -> Box<Self> {
+    pub fn new() -> Self {
         info!("Initializing input manager...");
-        return Box::new(Self {
+        return Self {
             pressed_keys: HashSet::new(),
             previous_mouse_position: Point2::new(0, 0),
             mouse_position: Point2::new(0, 0),
             mouse_left_button_pressed: false,
             mouse_right_button_pressed: false
-        });
+        };
     }
 }
 
@@ -32,7 +33,6 @@ impl InputState {
             .filter_map(Keycode::from_scancode)
             .collect();
     }
-
 
     pub fn is_key_pressed(&self, key_code: Keycode) -> bool {
         return self.pressed_keys.contains(&key_code);
