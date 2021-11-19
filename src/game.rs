@@ -34,16 +34,23 @@ impl Game {
     pub fn run(&mut self) {
         info!("Running game loop");
 
-        while self.is_active() {
-            let mut tick = self.graphics.get_ticks();
-            let next_tick : u32 = tick + 1000 / crate::FPS;
+        let mut tick = self.graphics.get_ticks();
+        let mut prev_tick = tick;
 
-            while (tick <= next_tick) {
-                self.handle_inputs();
-                self.world_update();
+        while self.is_active() {
+            let next_tick : u32 = tick + (1000 / crate::FPS);     //render every 1/FPS s
+
+            while tick <= next_tick {       //wait for next frame, but world is still updated
+                let dt = tick - prev_tick;
+                if dt != 0 {
+                    self.handle_inputs();
+                    self.world_update(dt);
+                }
+                prev_tick = tick;
                 tick = self.graphics.get_ticks();
             }
 
+            //render every 1/FPS secs
             self.render();
 
         }
@@ -53,8 +60,9 @@ impl Game {
         return self.is_active;
     }
 
-    fn world_update(&mut self) {
-        self.player.update(&self.inputs, 0.005);
+    fn world_update(&mut self, dt : u32) {
+        let f_dt = dt as f32;
+        self.player.update(&self.inputs, f_dt);
     }
 
     fn render(&mut self) {

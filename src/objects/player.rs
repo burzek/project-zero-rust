@@ -30,7 +30,7 @@ pub struct Player {
 }
 
 impl Player {
-    const ROTATION_PER_DT : f32 = PI / 1000.0;  // 180/sec
+    const ROTATION_PER_DT : f32 = 2.0*PI / 1000.0;  // 180/sec
     const THRUST_PER_DT : f32 = 100.0 / 3.0 / 1000.0;   // max thrust 100% is reached in 3secs
 
     pub(crate) fn new() -> Player {
@@ -49,6 +49,7 @@ impl Player {
 
 impl EntityUpdater for Player {
     fn update(&mut self, input_state:&InputState, dt:f32) {
+
         self.frame = self.frame + 1;
         //update direction
         self.entity.rotation += if input_state.is_key_right() { Player::ROTATION_PER_DT * dt }
@@ -63,12 +64,12 @@ impl EntityUpdater for Player {
         //self.speed += dtSpeed;
         //update position
 
-        let x = self.entity.get_position().x + (self.movement.direction.cos() * (20.0 * self.thrust_in_percent / 100.0 / 1000.0));
-        let y = self.entity.get_position().y + (self.movement.direction.sin() * (20.0 * self.thrust_in_percent / 100.0/ 1000.0));
+        let x = self.entity.get_position().x + (self.movement.direction.cos() * (20.0 * self.thrust_in_percent / 100.0 / 10000.0));
+        let y = self.entity.get_position().y + (self.movement.direction.sin() * (20.0 * self.thrust_in_percent / 100.0/ 10000.0));
         self.entity.set_position(x, y);
-        if (self.frame % 25000 == 0) {
-            info!("x:{}, dx:{}", self.entity.get_position().x, self.movement.direction.cos() * (self.thrust_in_percent / 100.0));
-        }
+        // if (self.frame == 0) {
+            info!("dt:{} x:{}, dx:{}", dt, self.entity.get_position().x, self.movement.direction.cos() * (self.thrust_in_percent / 100.0));
+        // }
     }
 }
 
